@@ -1,0 +1,27 @@
+services:
+
+  backend:
+    build: ./backend
+    container_name: my-backend
+    ports:
+      - "127.0.0.1:8000:8000"   # host port : container port
+    env_file:
+      - ./backend/.env
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: my-frontend
+    ports:
+      - "127.0.0.1:3000:80"     # visit localhost:3000 in the browser
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

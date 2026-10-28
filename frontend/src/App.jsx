@@ -31,7 +31,7 @@ export default function App() {
   return (
     <main className="page">
       <header className="top">
-        <h1>Deploy Dashboard</h1>
+        <h1>Deploy Dashboard v2</h1>
         <span className={online ? 'badge ok' : 'badge down'}>
           {online ? 'Backend online' : 'Backend offline'}
         </span>

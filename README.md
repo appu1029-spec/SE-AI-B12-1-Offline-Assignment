@@ -51,3 +51,27 @@ docker compose up --build -d
 ## Cost
 
 The whole deployment runs on free tiers: Oracle Cloud Always Free, DuckDNS and Let's Encrypt.
+## What this project demonstrates
+
+- **Containerisation:** separate Dockerfiles for a React (Vite) frontend, built in a multi-stage build and served by Nginx, and a FastAPI backend, started together with Docker Compose.
+- **Environment parity:** the same images run on my laptop and on the cloud server.
+- **Secrets hygiene:** `.env` is excluded from Git and from the Docker images, and `.env.example` documents the variables.
+- **Cloud deployment:** an Ubuntu VM on Oracle Cloud's Always Free tier, with swap added so a 1 GB machine can build the React app.
+- **Networking:** a DNS A record, a host-level Nginx reverse proxy, and Oracle firewall rules opened in both the cloud network and the server's own firewall.
+- **HTTPS:** a Let's Encrypt certificate issued by Certbot, HTTP to HTTPS redirect, and automatic renewal.
+- **Repeatable releases:** a push-pull-rebuild loop that deploys a change in a few minutes.
+
+## Problems solved along the way
+
+| Problem | Cause | Fix |
+|---|---|---|
+| Docker Desktop would not start | WSL was missing | Installed WSL, restarted |
+| Image build could not download Python | DNS lookup failure | Reset DNS and restarted Docker |
+| Built image was missing from the local list | Wrong Docker build driver | Rebuilt with `--load` on the default builder |
+| Oracle "out of capacity" for the free ARM machine | Free ARM capacity exhausted in the region | Used the free AMD micro machine and added 4 GB swap |
+| Ports 80 and 443 still blocked after opening them | Allow rules were below a REJECT rule | Reordered the iptables rules so they come first |
+| SSH sessions dropped | Idle connection timeout | Added keep-alive settings |
+
+## Limitations and next steps
+
+Single small server, no database, no monitoring or backups, and manual deploys. Natural upgrades: a GitHub Actions pipeline that deploys on push, a PostgreSQL container with a persistent volume, uptime monitoring, and SSH hardening (restrict by IP, add fail2ban).
